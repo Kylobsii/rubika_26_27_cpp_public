@@ -1,5 +1,6 @@
 #pragma once
 
+#include <vector>
 #include <string>
 
 namespace sf
@@ -7,12 +8,21 @@ namespace sf
 	class RenderWindow;
 }
 
+class Entity;
+
 class Scene
 {
 public:
 
 	Scene(const std::string& name);
 	~Scene();
+
+	std::string name;
+
+	std::vector<Entity*> entities;
+
+	void AddEntity(Entity* entity);
+	void RemoveEntity(Entity* entity);
 
 	virtual void Start();
 	virtual void Update(float fDeltaTime);

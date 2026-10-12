@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include "TransformComponent.h"
 
 namespace sf
 {
@@ -12,6 +13,9 @@ class Entity
 public:
 	Entity(std::string friendlyName = "");
 	virtual ~Entity();
+
+	std::string name;
+	TransformComponent transform;
 
 	virtual void Start();
 	virtual void Update(float fDeltaTime);
