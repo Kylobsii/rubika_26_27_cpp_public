@@ -1,9 +1,14 @@
 #pragma once
 
 #include <SFML/Graphics/Texture.hpp>
+#include <rapidxml/rapidxml.hpp>
+#include <rapidxml/rapidxml_utils.hpp>
 
+#include <map>
 #include <filesystem>
 #include <string>
+
+using namespace rapidxml;
 
 struct AnimationData
 {
@@ -35,8 +40,8 @@ struct TextureData
 	~TextureData();
 
 	sf::Texture Texture;
-	// Container of AnimationData AnimationsData;
-	// Container of StaticTileData StaticTilesData;
+	std::map<std::string, AnimationData> AnimationsData;
+	std::map<std::string, StaticTileData> StaticTilesData;
 
 	friend class TextureMgr;
 };
@@ -44,8 +49,13 @@ struct TextureData
 class TextureMgr final
 {
 public:
+	TextureMgr();
+	~TextureMgr();
+
 	void Init();
 	void Shut();
+
+	std::vector<TextureData> Textures;
 
 	/*
 	 * Loads the texture using the given path, including its metadata.
@@ -59,4 +69,13 @@ public:
 	 * Returns the corresponding TextureData using the name of the texture. Returns the default TextureData in case of an unknown name
 	 */
 	const TextureData& GetTextureData(const std::string& name) const;
+
+private:
+	bool LoadMetaData(TextureData DataContainer, std::filesystem::path& path);
+
+	bool StoreAnimations(TextureData DataContainer, xml_node<>* root);
+	AnimationData AnimationNodeToData(xml_node<>* node);
+
+	bool StoreStaticTiles(TextureData DataContainer, xml_node<>* root);
+	StaticTileData StaticTileNodeToData(xml_node<>* node);
 };
