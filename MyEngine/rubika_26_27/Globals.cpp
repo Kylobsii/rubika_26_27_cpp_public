@@ -2,6 +2,7 @@
 
 #include <DebugMgr.h>
 #include <Logger.h>
+#include <SceneMgr.h>
 
 Globals gData;
 
@@ -9,6 +10,7 @@ Globals::Globals() : FrameCount(0)
 {
 	DebugMgr = new ::DebugMgr();
 	Logger = new ::Logger();
+	SceneMgr = new ::SceneMgr();
 }
 
 Globals::~Globals()
@@ -19,11 +21,13 @@ Globals::~Globals()
 void Globals::Init()
 {
 	Logger->Init();
+	SceneMgr->Init();
 }
 
 void Globals::Shut()
 {
 	Logger->Shut();
+	SceneMgr->Shut();
 }
 
 void Globals::Destroy()

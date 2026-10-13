@@ -4,6 +4,7 @@
 Scene::Scene(const std::string& name)
 {
 	this->name = name;
+	entityNameBuffer[0] = '\0';
 }
 
 Scene::~Scene()
@@ -35,8 +36,18 @@ void Scene::Destroy()
 	}
 }
 
-void Scene::AddEntity(Entity* entity)
+int Scene::GetEntityID()
 {
+	int result = createdEntityCount;
+	createdEntityCount++;
+
+	return result;
+}
+
+void Scene::AddEntity(std::string name)
+{
+	Entity* entity = new Entity(name);
+
 	entities.push_back(entity);
 }
 

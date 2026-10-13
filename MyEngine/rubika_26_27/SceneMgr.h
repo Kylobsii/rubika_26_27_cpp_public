@@ -5,9 +5,10 @@
 
 class Scene;
 
-class SceneMgr
+class SceneMgr : IDebugable
 {
 public:
+	SceneMgr();
 	~SceneMgr();
 
 	void Init();
@@ -22,12 +23,15 @@ public:
 	void AddNewScene(std::string name = "DefaultScene");
 	void AddExistingScene(Scene* scene);
 
+	void DeleteScene(std::string name);
+
 	void SetCurrentScene(Scene* scene);
 	void SetCurrentScene(std::string name);
 
-	void DrawSceneList();
+	virtual void DrawDebug() override;
 
 private:
-	bool singleOutCurrentScene = true;
+	char sceneNameBuffer[128];
+	std::string newSceneName;
 };
 

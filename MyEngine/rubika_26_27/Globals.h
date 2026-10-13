@@ -2,6 +2,7 @@
 
 class DebugMgr;
 class Logger;
+class SceneMgr;
 
 class Globals
 {
@@ -19,6 +20,7 @@ public:
 
 	DebugMgr* DebugMgr;
 	Logger* Logger;
+	SceneMgr* SceneMgr;
 };
 
 extern Globals gData;

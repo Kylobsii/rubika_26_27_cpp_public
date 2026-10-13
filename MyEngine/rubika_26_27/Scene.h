@@ -21,7 +21,12 @@ public:
 
 	std::vector<Entity*> entities;
 
-	void AddEntity(Entity* entity);
+	int GetEntityID();
+
+	char entityNameBuffer[128];
+	std::string newEntityName;
+
+	void AddEntity(std::string name);
 	void RemoveEntity(Entity* entity);
 
 	virtual void Start();
@@ -33,4 +38,7 @@ public:
 	 * Function that will be called each frame to draw the entity
 	*/
 	void Draw(sf::RenderWindow& window) const;
+
+private:
+	int createdEntityCount = 0;
 };
