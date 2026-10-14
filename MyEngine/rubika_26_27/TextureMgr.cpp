@@ -2,7 +2,13 @@
 
 #include "Logger.h"
 
+#ifdef _USE_IMGUI
+#include <Imgui/imgui.h>
+#include <Imgui/imgui-SFML.h>
+#endif
+
 #include <filesystem>
+#include <Globals.h>
 
 TextureData::TextureData()
 {
@@ -14,6 +20,7 @@ TextureData::~TextureData()
 
 TextureMgr::TextureMgr()
 {
+	DefaultTextureData = TextureData();
 }
 
 TextureMgr::~TextureMgr()
@@ -22,22 +29,96 @@ TextureMgr::~TextureMgr()
 
 void TextureMgr::Init()
 {
+	gData.DebugMgr->RegisterDebugableWindow("TextureMgr", this);
 }
 
 void TextureMgr::Shut()
 {
+	gData.DebugMgr->UnregisterDebugableWindow("TextureMgr");
+}
+
+void TextureMgr::DrawDebug()
+{
+#ifdef _USE_IMGUI
+	ImGui::SetNextItemWidth(500.0f);
+	ImGui::InputText("Path", texturePathBuffer, IM_ARRAYSIZE(texturePathBuffer));
+
+	ImGui::SameLine();
+	if (ImGui::Button("LoadTexture"))
+	{
+		texturePath = texturePathBuffer;
+		LoadTexture(texturePath);
+
+		texturePathBuffer[0] = '\0';
+	}
+
+	ImGui::Separator();
+
+	for(auto& texturePair : Textures)
+	{
+		TextureData& data = texturePair.second;
+		if (ImGui::CollapsingHeader(texturePair.first.c_str()))
+		{
+			ImGui::Image(data.Texture);
+			ImGui::Text("Texture Size: %d x %d", data.Texture.getSize().x, data.Texture.getSize().y);
+			for (auto& animPair : data.AnimationsData)
+			{
+				AnimationData& animData = animPair.second;
+				if (ImGui::TreeNode(animPair.first.c_str()))
+				{
+					ImGui::Text("StartX: %d", animData.StartX);
+					ImGui::Text("StartY: %d", animData.StartY);
+					ImGui::Text("SizeX: %d", animData.SizeX);
+					ImGui::Text("SizeY: %d", animData.SizeY);
+					ImGui::Text("OffsetX: %d", animData.OffsetX);
+					ImGui::Text("OffsetY: %d", animData.OffsetY);
+					ImGui::Text("AnimationSpriteCount: %d", animData.AnimationSpriteCount);
+					ImGui::Text("SpriteOnLine: %d", animData.SpriteOnLine);
+					ImGui::Text("IsReverted: %s", animData.IsReverted ? "true" : "false");
+					ImGui::Text("TimeBetweenAnimationInS: %.2f", animData.TimeBetweenAnimationInS);
+					ImGui::TreePop();
+				}
+				ImGui::Dummy(ImVec2(0.0f, 5.0f));
+			}
+
+			ImGui::Separator();
+
+			for (auto& tilePair : data.StaticTilesData)
+			{
+				StaticTileData& tileData = tilePair.second;
+				if (ImGui::TreeNode(tilePair.first.c_str()))
+				{
+					ImGui::Text("StartX: %d", tileData.StartX);
+					ImGui::Text("StartY: %d", tileData.StartY);
+					ImGui::Text("SizeX: %d", tileData.SizeX);
+					ImGui::Text("SizeY: %d", tileData.SizeY);
+					ImGui::Text("IsRevertedX: %s", tileData.IsRevertedX ? "true" : "false");
+					ImGui::Text("IsRevertedY: %s", tileData.IsRevertedY ? "true" : "false");
+					ImGui::TreePop();
+				}
+			}
+		}
+	}
+#endif
 }
 
 bool TextureMgr::LoadTexture(const std::filesystem::path& path)
 {
 	Logger::Info("Loading texture: " + path.string());
 
-	TextureData textureData = TextureData();
-
 	if (std::filesystem::exists(path))
 	{
+		std::string name = path.stem().string();
+
+		auto it = Textures.emplace(name, TextureData());
+		TextureData& textureData = it.first->second;
+
 		textureData.Texture = sf::Texture(path);
-		return true;
+
+		std::string pathStr = path.string();
+		pathStr.replace(pathStr.find(".png"), 4, ".xml");
+
+		return LoadMetaData(textureData, pathStr);
 	}
 	else
 	{
@@ -47,11 +128,11 @@ bool TextureMgr::LoadTexture(const std::filesystem::path& path)
 	return false;
 }
 
-bool TextureMgr::LoadMetaData(TextureData DataContainer, std::filesystem::path& path)
+bool TextureMgr::LoadMetaData(TextureData& DataContainer, std::string pathStr)
 {
-	Logger::Info("Loading meta data of: " + path.string());
+	Logger::Info("Loading meta data of: " + pathStr);
 
-	file<> xmlFile(path.string().c_str());
+	file<> xmlFile(pathStr.c_str());
 	xml_document<> doc;
 	doc.parse<0>(xmlFile.data());
 
@@ -66,13 +147,13 @@ bool TextureMgr::LoadMetaData(TextureData DataContainer, std::filesystem::path& 
 	}
 	else
 	{
-		Logger::Error("Meta data of: '" + path.string() + "' isn't formatted correctly. Root must be either 'Animations' or 'Backgrounds'.");
+		Logger::Error("Meta data of: '" + pathStr + "' isn't formatted correctly. Root must be either 'Animations' or 'Backgrounds'.");
 	}
 
 	return false;
 }
 
-bool TextureMgr::StoreAnimations(TextureData DataContainer, xml_node<>* root)
+bool TextureMgr::StoreAnimations(TextureData& DataContainer, xml_node<>* root)
 {
 	xml_node<>* currAnimNode = root->first_node("Animation");
 
@@ -83,7 +164,7 @@ bool TextureMgr::StoreAnimations(TextureData DataContainer, xml_node<>* root)
 	}
 
 	std::string currAnimName = "";
-	while (std::string(currAnimNode->name(), currAnimNode->name_size()) == "Animation")
+	while (currAnimNode && std::string(currAnimNode->name(), currAnimNode->name_size()) == "Animation")
 	{
 		currAnimName = currAnimNode->first_attribute()->value();
 		Logger::Info("Storing animation: " + currAnimName);
@@ -182,7 +263,7 @@ AnimationData TextureMgr::AnimationNodeToData(xml_node<>* node)
 	return data;
 }
 
-bool TextureMgr::StoreStaticTiles(TextureData DataContainer, xml_node<>* root)
+bool TextureMgr::StoreStaticTiles(TextureData& DataContainer, xml_node<>* root)
 {
 	xml_node<>* currTileNode = root->first_node();
 
@@ -260,7 +341,12 @@ StaticTileData TextureMgr::StaticTileNodeToData(xml_node<>* node)
 	return data;
 }
 
-//const TextureData& TextureMgr::GetTextureData(const std::string& name) const
-//{
-//	
-//}
+const TextureData& TextureMgr::GetTextureData(const std::string& name) const
+{
+	auto it = Textures.find(name);
+	if (it != Textures.end())
+	{
+		return it->second;
+	}
+	return DefaultTextureData;
+}

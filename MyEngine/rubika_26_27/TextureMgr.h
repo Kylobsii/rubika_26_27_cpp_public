@@ -4,6 +4,8 @@
 #include <rapidxml/rapidxml.hpp>
 #include <rapidxml/rapidxml_utils.hpp>
 
+#include <DebugMgr.h>
+
 #include <map>
 #include <filesystem>
 #include <string>
@@ -46,7 +48,7 @@ struct TextureData
 	friend class TextureMgr;
 };
 
-class TextureMgr final
+class TextureMgr final : public IDebugable
 {
 public:
 	TextureMgr();
@@ -55,7 +57,9 @@ public:
 	void Init();
 	void Shut();
 
-	std::vector<TextureData> Textures;
+	virtual void DrawDebug() override;
+
+	std::map<std::string, TextureData> Textures;
 
 	/*
 	 * Loads the texture using the given path, including its metadata.
@@ -71,11 +75,19 @@ public:
 	const TextureData& GetTextureData(const std::string& name) const;
 
 private:
-	bool LoadMetaData(TextureData DataContainer, std::filesystem::path& path);
+	bool LoadMetaData(TextureData& DataContainer, std::string pathStr);
 
-	bool StoreAnimations(TextureData DataContainer, xml_node<>* root);
+	bool StoreAnimations(TextureData& DataContainer, xml_node<>* root);
 	AnimationData AnimationNodeToData(xml_node<>* node);
 
-	bool StoreStaticTiles(TextureData DataContainer, xml_node<>* root);
+	bool StoreStaticTiles(TextureData& DataContainer, xml_node<>* root);
 	StaticTileData StaticTileNodeToData(xml_node<>* node);
+
+	TextureData DefaultTextureData;
+
+	char texturePathBuffer[128];
+	std::filesystem::path texturePath;
+
+	char textureNameBuffer[128];
+	std::string textureName;
 };
