@@ -19,9 +19,7 @@ TextureData::~TextureData()
 }
 
 TextureMgr::TextureMgr()
-{
-	DefaultTextureData = TextureData();
-}
+{}
 
 TextureMgr::~TextureMgr()
 {
@@ -350,3 +348,10 @@ const TextureData& TextureMgr::GetTextureData(const std::string& name) const
 	}
 	return DefaultTextureData;
 }
+
+const TextureData& TextureMgr::GetDefaultTextureData()
+{
+	return DefaultTextureData;
+}
+
+

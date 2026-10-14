@@ -74,6 +74,8 @@ public:
 	 */
 	const TextureData& GetTextureData(const std::string& name) const;
 
+	static const TextureData& GetDefaultTextureData();
+
 private:
 	bool LoadMetaData(TextureData& DataContainer, std::string pathStr);
 
@@ -83,11 +85,11 @@ private:
 	bool StoreStaticTiles(TextureData& DataContainer, xml_node<>* root);
 	StaticTileData StaticTileNodeToData(xml_node<>* node);
 
-	TextureData DefaultTextureData;
+	inline static TextureData DefaultTextureData;
 
-	char texturePathBuffer[128];
+	char texturePathBuffer[128] = {};
 	std::filesystem::path texturePath;
 
-	char textureNameBuffer[128];
+	char textureNameBuffer[128] = {};
 	std::string textureName;
 };

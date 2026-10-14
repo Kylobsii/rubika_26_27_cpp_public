@@ -1,6 +1,8 @@
 #include "TransformComponent.h"
 
-TransformComponent::TransformComponent()
+#include "Entity.h"
+
+TransformComponent::TransformComponent(Entity& entity) : IComponent(entity)
 {
 	WorldPosition = sf::Vector2f();
 	WorldPositionQuery = sf::Vector2f();
@@ -9,10 +11,6 @@ TransformComponent::TransformComponent()
 
 	UpdateMatrix();
 }
-
-
-TransformComponent::~TransformComponent()
-{}
 
 const sf::Transform& TransformComponent::GetMatrix() const
 {

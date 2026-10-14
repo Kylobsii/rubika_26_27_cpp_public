@@ -2,6 +2,7 @@
 
 #include <string>
 #include "TransformComponent.h"
+#include "RenderComponent.h"
 
 namespace sf
 {
@@ -16,6 +17,7 @@ public:
 
 	std::string name;
 	TransformComponent transform;
+	RenderComponent renderer;
 
 	virtual void Start();
 	virtual void Update(float fDeltaTime);

@@ -8,9 +8,9 @@ class IComponent abstract
 {
 public:
 	IComponent() = delete;
-	IComponent(Entity& entity);
+	IComponent(Entity& entity) : ParentEntity(entity) {};
 
-	virtual ~IComponent();
+	virtual ~IComponent() = default;
 
 	virtual void Start() = 0;
 
