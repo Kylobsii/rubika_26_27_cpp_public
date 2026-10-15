@@ -7,6 +7,7 @@ RectangleShape::RectangleShape()
 
 void RectangleShape::Start()
 {
+	rectangleShape.setFillColor(sf::Color());
 }
 
 void RectangleShape::Update(float deltaTime)

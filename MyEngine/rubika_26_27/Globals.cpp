@@ -41,6 +41,12 @@ void Globals::Destroy()
 
 	delete Logger;
 	Logger = nullptr;
+
+	delete SceneMgr;
+	SceneMgr = nullptr;
+
+	delete TextureMgr;
+	TextureMgr = nullptr;
 }
 
 void Globals::IncrementFrameCount()

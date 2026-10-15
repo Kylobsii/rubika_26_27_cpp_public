@@ -7,7 +7,7 @@
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Graphics/RectangleShape.hpp>
 
-class RectangleShape : IDrawable
+class RectangleShape : public IDrawable
 {
 public:
 

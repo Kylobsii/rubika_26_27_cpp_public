@@ -10,6 +10,7 @@ Entity::~Entity()
 
 void Entity::Start()
 {
+	renderer.Start();
 }
 
 void Entity::Update(float fDeltaTime)
@@ -19,4 +20,9 @@ void Entity::Update(float fDeltaTime)
 void Entity::Destroy()
 {
 	transform.Destroy();
+}
+
+void Entity::Draw(sf::RenderWindow& window) const
+{
+	renderer.Draw(window);
 }
