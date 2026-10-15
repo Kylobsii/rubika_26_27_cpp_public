@@ -3,6 +3,7 @@
 #include "IComponent.h"
 
 #include <SFML/Graphics/Transform.hpp>
+#include <string>
 
 class Entity;
 
@@ -37,6 +38,9 @@ public:
 	virtual void Start() override;
 	virtual void Update(float fDeltaTime) override;
 	virtual void Destroy() override;
+
+	virtual void DrawDebug() override;
+	virtual std::string GetName() override;
 
 private:
 	sf::Transform Matrix;

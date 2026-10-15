@@ -21,6 +21,7 @@ public:
 	void SetWorldTransform(const sf::Transform& transform);
 
 	void Draw(sf::RenderWindow& window) const;
+	virtual std::string GetName() = 0;
 
 protected:
 	bool Visible;

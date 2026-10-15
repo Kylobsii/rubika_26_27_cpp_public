@@ -186,7 +186,7 @@ AnimationData TextureMgr::AnimationNodeToData(xml_node<>* node)
 	}
 	data.StartX = atoi(currNode->value());
 
-	currNode = currNode->first_node("Y");
+	currNode = node->first_node("Y");
 	if(currNode == 0)
 	{
 		Logger::Error("Animation node isn't formatted correctly: missing 'Y' node. Stored meta data will be incomplete !");
@@ -194,7 +194,7 @@ AnimationData TextureMgr::AnimationNodeToData(xml_node<>* node)
 	}
 	data.StartY = atoi(currNode->value());
 
-	currNode = currNode->first_node("SizeX");
+	currNode = node->first_node("SizeX");
 	if(currNode == 0)
 	{
 		Logger::Error("Animation node isn't formatted correctly: missing 'SizeX' node. Stored meta data will be incomplete !");
@@ -202,7 +202,7 @@ AnimationData TextureMgr::AnimationNodeToData(xml_node<>* node)
 	}
 	data.SizeX = atoi(currNode->value());
 
-	currNode = currNode->first_node("SizeY");
+	currNode = node->first_node("SizeY");
 	if(currNode == 0)
 	{
 		Logger::Error("Animation node isn't formatted correctly: missing 'SizeY' node. Stored meta data will be incomplete !");
@@ -210,7 +210,7 @@ AnimationData TextureMgr::AnimationNodeToData(xml_node<>* node)
 	}
 	data.SizeY = atoi(currNode->value());
 
-	currNode = currNode->first_node("OffsetX");
+	currNode = node->first_node("OffsetX");
 	if (currNode == 0)
 	{
 		Logger::Error("Animation node isn't formatted correctly: missing 'OffsetX' node. Stored meta data will be incomplete !");
@@ -218,7 +218,7 @@ AnimationData TextureMgr::AnimationNodeToData(xml_node<>* node)
 	}
 	data.OffsetX = atoi(currNode->value());
 
-	currNode = currNode->first_node("OffsetY");
+	currNode = node->first_node("OffsetY");
 	if (currNode == 0)
 	{
 		Logger::Error("Animation node isn't formatted correctly: missing 'OffsetY' node. Stored meta data will be incomplete !");
@@ -226,7 +226,7 @@ AnimationData TextureMgr::AnimationNodeToData(xml_node<>* node)
 	}
 	data.OffsetY = atoi(currNode->value());
 
-	currNode = currNode->first_node("SpriteNum");
+	currNode = node->first_node("SpriteNum");
 	if (currNode == 0)
 	{
 		Logger::Error("Animation node isn't formatted correctly: missing 'SpriteNum' node. Stored meta data will be incomplete !");
@@ -234,7 +234,7 @@ AnimationData TextureMgr::AnimationNodeToData(xml_node<>* node)
 	}
 	data.AnimationSpriteCount = atoi(currNode->value());
 
-	currNode = currNode->first_node("SpritesOnLine");
+	currNode = node->first_node("SpritesOnLine");
 	if (currNode == 0)
 	{
 		Logger::Error("Animation node isn't formatted correctly: missing 'SpritesOnLine' node. Stored meta data will be incomplete !");
@@ -242,7 +242,7 @@ AnimationData TextureMgr::AnimationNodeToData(xml_node<>* node)
 	}
 	data.SpriteOnLine = atoi(currNode->value());
 
-	currNode = currNode->first_node("Reverted");
+	currNode = node->first_node("Reverted");
 	if (currNode == 0)
 	{
 		Logger::Error("Animation node isn't formatted correctly: missing 'Reverted' node. Stored meta data will be incomplete !");
@@ -250,7 +250,7 @@ AnimationData TextureMgr::AnimationNodeToData(xml_node<>* node)
 	}
 	data.IsReverted = atoi(currNode->value());
 
-	currNode = currNode->first_node("TimeBetweenAnimation");
+	currNode = node->first_node("TimeBetweenAnimation");
 	if (currNode == 0)
 	{
 		Logger::Error("Animation node isn't formatted correctly: missing 'TimeBetweenAnimation' node. Stored meta data will be incomplete !");
@@ -296,7 +296,7 @@ StaticTileData TextureMgr::StaticTileNodeToData(xml_node<>* node)
 	}
 	data.StartX = atoi(currNode->value());
 
-	currNode = currNode->first_node("Y");
+	currNode = node->first_node("Y");
 	if (currNode == 0)
 	{
 		Logger::Error("Tile node isn't formatted correctly: missing 'Y' node. Stored meta data will be incomplete !");
@@ -304,7 +304,7 @@ StaticTileData TextureMgr::StaticTileNodeToData(xml_node<>* node)
 	}
 	data.StartY = atoi(currNode->value());
 
-	currNode = currNode->first_node("SizeX");
+	currNode = node->first_node("SizeX");
 	if (currNode == 0)
 	{
 		Logger::Error("Tile node isn't formatted correctly: missing 'SizeX' node. Stored meta data will be incomplete !");
@@ -312,7 +312,7 @@ StaticTileData TextureMgr::StaticTileNodeToData(xml_node<>* node)
 	}
 	data.SizeX = atoi(currNode->value());
 
-	currNode = currNode->first_node("SizeY");
+	currNode = node->first_node("SizeY");
 	if (currNode == 0)
 	{
 		Logger::Error("Tile node isn't formatted correctly: missing 'SizeY' node. Stored meta data will be incomplete !");
@@ -320,7 +320,7 @@ StaticTileData TextureMgr::StaticTileNodeToData(xml_node<>* node)
 	}
 	data.SizeY = atoi(currNode->value());
 
-	currNode = currNode->first_node("RevertedX");
+	currNode = node->first_node("RevertedX");
 	if (currNode == 0)
 	{
 		Logger::Error("Tile node isn't formatted correctly: missing 'RevertedX' node. Stored meta data will be incomplete !");
@@ -328,7 +328,7 @@ StaticTileData TextureMgr::StaticTileNodeToData(xml_node<>* node)
 	}
 	data.IsRevertedX = atoi(currNode->value());
 
-	currNode = currNode->first_node("RevertedY");
+	currNode = node->first_node("RevertedY");
 	if (currNode == 0)
 	{
 		Logger::Error("Tile node isn't formatted correctly: missing 'RevertedY' node. Stored meta data will be incomplete !");

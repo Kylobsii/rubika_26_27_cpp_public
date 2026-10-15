@@ -6,6 +6,8 @@
 #include <Profiler.h>
 #include <Logger.h>
 #include <DebugMgr.h>
+#include <SceneMgr.h>
+#include <Scene.h>
 
 int main()
 {
@@ -63,6 +65,11 @@ int main()
 
         PROFILER_EVENT_BEGIN(PROFILER_COLOR_GREEN, "Draw");
         window.clear();
+
+        if (gData.SceneMgr->currentScene) 
+        {
+            gData.SceneMgr->currentScene->Draw(window);
+        }
 
 #ifdef _USE_IMGUI
         ImGui::SFML::Render(window);

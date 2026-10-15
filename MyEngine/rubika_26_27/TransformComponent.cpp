@@ -1,6 +1,9 @@
 #include "TransformComponent.h"
-
 #include "Entity.h"
+
+#ifdef _USE_IMGUI
+#include <Imgui/imgui.h>
+#endif
 
 TransformComponent::TransformComponent(Entity& entity) : IComponent(entity)
 {
@@ -69,6 +72,20 @@ void TransformComponent::Update(float fDeltaTime)
 
 void TransformComponent::Destroy()
 {}
+
+void TransformComponent::DrawDebug()
+{
+#ifdef _USE_IMGUI
+	ImGui::Text("Position: (%.2f, %.2f)", GetWorldPosition().x, GetWorldPosition().y);
+	ImGui::Text("Rotation: %.2f degrees", GetRotation());
+	ImGui::Text("Scale: (%.2f, %.2f)", GetScale().x, GetScale().y);
+#endif
+}
+
+std::string TransformComponent::GetName()
+{
+	return "Transform";
+}
 
 void TransformComponent::UpdateMatrix()
 {

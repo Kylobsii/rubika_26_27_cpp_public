@@ -54,4 +54,13 @@ void Scene::AddEntity(std::string name)
 void Scene::RemoveEntity(Entity* entity)
 {
 	std::erase(entities, entity);
+	delete entity;
+}
+
+void Scene::Draw(sf::RenderWindow& window) const
+{
+	for (Entity* entity : entities)
+	{
+		entity->Draw(window);
+	}
 }

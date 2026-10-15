@@ -14,6 +14,11 @@ void RectangleShape::Update(float deltaTime)
 {
 }
 
-void RectangleShape::Destroy(float deltaTime)
+void RectangleShape::Destroy()
 {
+}
+
+std::string RectangleShape::GetName()
+{
+	return "Rect";
 }

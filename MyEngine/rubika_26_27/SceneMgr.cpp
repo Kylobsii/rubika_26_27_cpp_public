@@ -1,6 +1,7 @@
 #include "Logger.h"
 #include "Scene.h"
 #include "Entity.h"
+#include "TransformComponent.h"
 
 #ifdef _USE_IMGUI
 #include <Imgui/imgui.h>
@@ -217,11 +218,25 @@ void SceneMgr::DrawDebug()
 			{
 				if (ImGui::TreeNode(entity->name.c_str()))
 				{
-					ImGui::Text("Entity Name: %s", entity->name.c_str());
-					ImGui::Text("Position: (%.2f, %.2f)", entity->transform.GetWorldPosition().x, entity->transform.GetWorldPosition().y);
-					ImGui::Text("Rotation: %.2f degrees", entity->transform.GetRotation());
-					ImGui::Text("Scale: (%.2f, %.2f)", entity->transform.GetScale().x, entity->transform.GetScale().y);
-					
+					for (IComponent* comp : entity->components)
+					{
+						field_id = comp->GetName() + "##" + scene.name + "##" + entity->name;
+						if (ImGui::TreeNode(field_id.c_str()))
+						{
+							comp->DrawDebug();
+
+							field_id = "Delete Component (NOT IMPLEMENTED)##" + scene.name + "##" + entity->name;
+							if (ImGui::Button(field_id.c_str()))
+							{
+								// TO DO
+							}
+
+							ImGui::Dummy(ImVec2(0.0f, 5.0f));
+
+							ImGui::TreePop();
+						}
+					}
+
 					field_id = "Delete Entity##" + entity->name;
 					if (ImGui::Button(field_id.c_str()))
 					{

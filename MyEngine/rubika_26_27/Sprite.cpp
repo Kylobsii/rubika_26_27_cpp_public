@@ -15,6 +15,11 @@ void Sprite::Update(float deltaTime)
 {
 }
 
-void Sprite::Destroy(float deltaTime)
+void Sprite::Destroy()
 {
+}
+
+std::string Sprite::GetName()
+{
+	return "Sprite";
 }
