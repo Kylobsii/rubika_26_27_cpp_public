@@ -51,5 +51,8 @@ private:
 
 	sf::Vector2f WorldPositionQuery;
 
+	char WorldPosXBuffer[128];
+	char WorldPosYBuffer[128];
+
 	void UpdateMatrix();
 };
