@@ -346,6 +346,9 @@ const TextureData& TextureMgr::GetTextureData(const std::string& name) const
 	{
 		return it->second;
 	}
+
+	Logger::Warning(name + " is an unknown name for texture data, returning default texture data!");
+
 	return DefaultTextureData;
 }
 
