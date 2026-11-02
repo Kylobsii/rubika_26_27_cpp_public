@@ -34,9 +34,20 @@ void SceneMgr::Shut()
 	gData.DebugMgr->UnregisterDebugableWindow("Scene List");
 }
 
+void SceneMgr::Start()
+{
+	if (currentScene)
+	{
+		currentScene->Start();
+	}
+}
+
 void SceneMgr::Update(float fDeltaTime)
 {
-	currentScene->Update(fDeltaTime);
+	if (currentScene)
+	{
+		currentScene->Update(fDeltaTime);
+	}
 }
 
 void SceneMgr::Destroy()
@@ -45,12 +56,12 @@ void SceneMgr::Destroy()
 	currentScene = nullptr;
 }
 
-void SceneMgr::AddNewScene(std::string name)
+Scene* SceneMgr::AddNewScene(std::string name)
 {
 	if(scenes.find(name) != scenes.end())
 	{
 		Logger::Warning("Scene with name '" + name + "' already exists. Creation was cancelled !");
-		return;
+		return nullptr;
 	}
 
 	// returns a pair <pair <key, val>, bool success>
@@ -60,17 +71,8 @@ void SceneMgr::AddNewScene(std::string name)
 	{ 
 		currentScene = &it.first->second; // first = pair <key, val>, first->second = val = Scene
 	}
-}
 
-void SceneMgr::AddExistingScene(Scene* scene)
-{
-	if (scenes.find(scene->name) != scenes.end())
-	{
-		Logger::Warning("Scene with name '" + scene->name + "' already exists. Creation was cancelled !");
-		return;
-	}
-
-	scenes.emplace(scene->name, *scene);
+	return &it.first->second;
 }
 
 void SceneMgr::DeleteScene(std::string name)
@@ -127,6 +129,12 @@ void SceneMgr::DrawDebug()
 	ImGui::SameLine();
 	if (ImGui::Button("Create New Scene"))
 	{
+		if (sceneNameBuffer[0] == '\0')
+		{
+			Logger::Warning("Scene name is empty. Creation was cancelled !");
+			return;
+		}
+
 		newSceneName = sceneNameBuffer;
 		AddNewScene(newSceneName);
 
@@ -206,6 +214,12 @@ void SceneMgr::DrawDebug()
 			field_id = "Create New Entity##" + scene.name;
 			if (ImGui::Button(field_id.c_str()))
 			{
+				if (scene.entityNameBuffer[0] == '\0')
+				{
+					Logger::Warning("Entity name is empty. Creation was cancelled !");
+					return;
+				}
+
 				scene.newEntityName = std::string(scene.entityNameBuffer) + "##" + std::to_string(scene.GetEntityID());
 				scene.AddEntity(scene.newEntityName);
 

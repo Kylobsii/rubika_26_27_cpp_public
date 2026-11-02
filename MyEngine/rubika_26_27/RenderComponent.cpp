@@ -5,32 +5,86 @@
 #endif
 
 #include "Logger.h"
+#include "Entity.h"
 
 RenderComponent::RenderComponent(Entity& entity)
 	: IComponent(entity) { }
 
 void RenderComponent::Start()
 {
-	for (auto drawable : drawables)
+	Transform = GetEntity().GetComponent<TransformComponent>();
+
+	for (auto drawable : Drawables)
 	{
-		drawable->Start();
+		drawable.Drawable->Start();
 	}
 }
 
 void RenderComponent::Update(float fDeltaTime)
 {
-	for (auto drawable : drawables)
+	for (const DrawableInfo& info : Drawables)
 	{
-		drawable->Update(fDeltaTime);
+		if (info.Drawable->IsVisible())
+		{
+			if (info.HasRelativeTransform)
+			{
+				info.Drawable->SetWorldTransform(Transform->GetMatrix() * info.RelativeTransform);
+			}
+			else
+			{
+				info.Drawable->SetWorldTransform(Transform->GetMatrix());
+			}
+
+			info.Drawable->Update(fDeltaTime);
+		}
 	}
 }
 
 void RenderComponent::Destroy()
 {
-	for (auto drawable : drawables)
+	for (auto drawable : Drawables)
 	{
-		drawable->Destroy();
-		delete drawable;
+		drawable.Drawable->Destroy();
+		delete drawable.Drawable;
+	}
+}
+
+void RenderComponent::SetDrawableRelativePosition(const IDrawable* drawable, const sf::Vector2f& position)
+{
+	for (DrawableInfo& info : Drawables)
+	{
+		if (info.Drawable == drawable)
+		{
+			info.RelativePosition = position;
+			info.ComputeTransform();
+			return;
+		}
+	}
+}
+
+void RenderComponent::SetDrawableRelativeRotation(const IDrawable* drawable, float rotation)
+{
+	for (DrawableInfo& info : Drawables)
+	{
+		if (info.Drawable == drawable)
+		{
+			info.RelativeRotation = rotation;
+			info.ComputeTransform();
+			return;
+		}
+	}
+}
+
+void RenderComponent::SetDrawableRelativeScale(const IDrawable* drawable, const sf::Vector2f& scale)
+{
+	for (DrawableInfo& info : Drawables)
+	{
+		if (info.Drawable == drawable)
+		{
+			info.RelativeScale = scale;
+			info.ComputeTransform();
+			return;
+		}
 	}
 }
 
@@ -38,9 +92,9 @@ void RenderComponent::DrawDebug()
 {
 #ifdef _USE_IMGUI
 	int drCount = 0;
-	for (IDrawable* dr : drawables)
+	for (const DrawableInfo& dr : Drawables)
 	{
-		ImGui::Text(" - %s", dr->GetName().c_str());
+		ImGui::Text(" - %s", dr.FriendlyName.c_str());
 		//ImGui::Image(dr)
 
 		drCount++;
@@ -55,8 +109,32 @@ std::string RenderComponent::GetName()
 
 void RenderComponent::Draw(sf::RenderWindow& window) const
 {
-	for (auto drawable : drawables)
+	for (const DrawableInfo& info : Drawables)
 	{
-		drawable->Draw(window);
+		if (info.Drawable->IsVisible())
+		{
+			info.Drawable->Draw(window);
+		}
 	}
+}
+
+RenderComponent::DrawableInfo::DrawableInfo()
+{
+	FriendlyName = "";
+	Drawable = nullptr;
+	RelativePosition = sf::Vector2f();
+	RelativeRotation = 0.f;
+	RelativeScale = sf::Vector2f(1.f, 1.f);
+	RelativeTransform = sf::Transform::Identity;
+	HasRelativeTransform = false;
+}
+
+void RenderComponent::DrawableInfo::ComputeTransform()
+{
+	RelativeTransform = sf::Transform::Identity;
+	RelativeTransform.translate(RelativePosition);
+	RelativeTransform.rotate(sf::degrees(RelativeRotation));
+	RelativeTransform.scale(RelativeScale);
+
+	HasRelativeTransform = RelativeTransform != sf::Transform::Identity;
 }

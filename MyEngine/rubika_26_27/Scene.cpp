@@ -44,11 +44,12 @@ int Scene::GetEntityID()
 	return result;
 }
 
-void Scene::AddEntity(std::string name)
+Entity* Scene::AddEntity(std::string name)
 {
 	Entity* entity = new Entity(name);
 
 	entities.push_back(entity);
+	return entity;
 }
 
 void Scene::RemoveEntity(Entity* entity)

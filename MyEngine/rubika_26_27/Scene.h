@@ -26,7 +26,7 @@ public:
 	char entityNameBuffer[128];
 	std::string newEntityName;
 
-	void AddEntity(std::string name);
+	Entity* AddEntity(std::string name);
 	void RemoveEntity(Entity* entity);
 
 	virtual void Start();

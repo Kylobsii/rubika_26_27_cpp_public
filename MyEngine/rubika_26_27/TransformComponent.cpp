@@ -67,6 +67,13 @@ sf::Vector2f TransformComponent::GetScale() const
 	return Scale;
 }
 
+void TransformComponent::Move(sf::Vector2f deltaPosition)
+{
+	WorldPosition += deltaPosition;
+	WorldPositionQuery += deltaPosition;
+	UpdateMatrix();
+}
+
 void TransformComponent::Start()
 {}
 

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "IDrawable.h"
+#include "TextureMgr.h"
 
 #include <SFML/Graphics/Drawable.hpp>
 #include <SFML/Graphics/Transform.hpp>
@@ -22,5 +23,24 @@ public:
 	virtual void Destroy() override;
 
 	virtual std::string GetName() override;
+
+	void Reset();
+
+	void SetTexture(const std::string& textureName);
+	void SetAnimation(const std::string& animationName);
+
+	void EnableAnimation(bool play);
+
+protected:
+
+	AnimationData CurrentAnimationData;
+
+	std::string CurrentTexture;
+	std::string CurrentAnimation;
+
+	int CurrentAnimationNb = 0;
+	float CurrentAnimationTime = 0.f;
+
+	bool PlayAnimation = true;
 };
 

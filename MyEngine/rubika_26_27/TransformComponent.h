@@ -35,6 +35,8 @@ public:
 	void SetScale(sf::Vector2f newScale);
 	sf::Vector2f GetScale() const;
 
+	void Move(sf::Vector2f deltaPosition);
+
 	virtual void Start() override;
 	virtual void Update(float fDeltaTime) override;
 	virtual void Destroy() override;

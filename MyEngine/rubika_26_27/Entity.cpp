@@ -6,13 +6,6 @@
 
 Entity::Entity(std::string friendlyName) : name(friendlyName)
 {
-	AddComponent<TransformComponent>();
-	RenderComponent* renderer = AddComponent<RenderComponent>();
-
-	Sprite* sprWrap = renderer->AddDrawable<Sprite>();
-
-	sprWrap->sprite.setTexture(gData.TextureMgr->Textures["Antonio_Belpaese"].Texture);
-	sprWrap->sprite.setTextureRect(sf::IntRect(sf::Vector2i(0, 0), sf::Vector2i(500, 500)));
 }
 
 Entity::~Entity()

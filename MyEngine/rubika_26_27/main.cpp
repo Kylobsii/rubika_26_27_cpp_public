@@ -1,13 +1,21 @@
+#include <Globals.h>
+
 #include <SFML/Graphics.hpp>
 #include <Imgui/imgui.h>
 #include <Imgui/imgui-SFML.h>
 
-#include <Globals.h>
 #include <Profiler.h>
 #include <Logger.h>
 #include <DebugMgr.h>
 #include <SceneMgr.h>
 #include <Scene.h>
+#include <Entity.h>
+#include <TransformComponent.h>
+#include <RenderComponent.h>
+#include <Sprite.h>
+#include <TextureMgr.h>
+#include <InputMgr.h>
+
 
 int main()
 {
@@ -17,10 +25,75 @@ int main()
 
     ImGui::SFML::Init(window);
 
-    Logger::Info("This is an info message. That is useful");
-    Logger::Warning("This is a warning message. Should I worry?");
-    Logger::Error("This is an error message. Oh sh*t!!");
+	gData.InputMgr->CreateInputAction("MoveUp");
+    gData.InputMgr->CreateInputAction("MoveDown");
+    gData.InputMgr->CreateInputAction("MoveLeft");
+    gData.InputMgr->CreateInputAction("MoveRight");
 
+    const char* texturePath = "../Ressources/IsaacSprite.png";
+	const char* textureName = "IsaacSprite";
+    gData.TextureMgr->LoadTexture(texturePath);
+
+    Entity* entity;
+    Scene* scene = gData.SceneMgr->AddNewScene("Main");
+    {
+        entity = scene->AddEntity("MainEntity");
+        TransformComponent* tc = entity->AddComponent<TransformComponent>();
+        {
+            tc->SetWorldPosition(sf::Vector2f(100.f, 100.f));
+        }
+
+        RenderComponent* rc = entity->AddComponent<RenderComponent>();
+        {
+            Sprite* bodySprite = rc->AddNewDrawable<Sprite>("Body", sf::Vector2f(2, 0), 0, sf::Vector2f(1, 1));
+            bodySprite->SetVisibility(true);
+            bodySprite->SetTexture(textureName);
+            bodySprite->SetAnimation("Body_Vertical");
+
+            Sprite* headSprite = rc->AddNewDrawable<Sprite>("Head", sf::Vector2f(-2.5f, -20), 0, sf::Vector2f(1, 1));
+            headSprite->SetVisibility(true);
+            headSprite->SetTexture(textureName);
+            headSprite->SetAnimation("Head_Down");
+        }
+    }
+    gData.SceneMgr->SetCurrentScene("Main");
+    gData.SceneMgr->Start();;
+
+    auto moveUpCallback = [entity](float value)
+        {
+			entity->GetComponent<TransformComponent>()->Move(sf::Vector2f(0, -.04f * value));
+        };
+
+    auto moveDownCallback = [entity](float value)
+        {
+			entity->GetComponent<TransformComponent>()->Move(sf::Vector2f(0, .04f * value));
+        };
+
+    auto moveLeftCallback = [entity](float value)
+        {
+            entity->GetComponent<TransformComponent>()->Move(sf::Vector2f(-.04f * value, 0));
+        };
+
+    auto moveRightCallback = [entity](float value)
+        {
+            entity->GetComponent<TransformComponent>()->Move(sf::Vector2f(.04f * value, 0));
+        };
+
+	gData.InputMgr->BindInputActionToKey("MoveUp", sf::Keyboard::Key::Up);
+    gData.InputMgr->BindInputActionToKey("MoveUp", sf::Keyboard::Key::Z);
+    gData.InputMgr->RegisterInputActionCallback("MoveUp", "Up Movement", moveUpCallback, nullptr);
+
+    gData.InputMgr->BindInputActionToKey("MoveDown", sf::Keyboard::Key::Down);
+    gData.InputMgr->BindInputActionToKey("MoveDown", sf::Keyboard::Key::S);
+    gData.InputMgr->RegisterInputActionCallback("MoveDown", "Down Movement", moveDownCallback, nullptr);
+    
+    gData.InputMgr->BindInputActionToKey("MoveLeft", sf::Keyboard::Key::Left);
+    gData.InputMgr->BindInputActionToKey("MoveLeft", sf::Keyboard::Key::Q);
+    gData.InputMgr->RegisterInputActionCallback("MoveLeft", "Left Movement", moveLeftCallback, nullptr);
+    
+    gData.InputMgr->BindInputActionToKey("MoveRight", sf::Keyboard::Key::Right);
+    gData.InputMgr->BindInputActionToKey("MoveRight", sf::Keyboard::Key::D);
+    gData.InputMgr->RegisterInputActionCallback("MoveRight", "Right Movement", moveRightCallback, nullptr);
     sf::Clock clock;
     clock.restart();
 
@@ -52,6 +125,11 @@ int main()
         PROFILER_EVENT_END();
 
         PROFILER_EVENT_BEGIN(PROFILER_COLOR_RED, "Update");
+
+		gData.InputMgr->Update(fDeltaTimeS); // Must stay first
+
+		gData.SceneMgr->Update(fDeltaTimeS);
+
 #ifdef _USE_IMGUI
         ImGui::SFML::Update(window, imGuiTime);
 #endif

@@ -17,11 +17,11 @@ public:
 	std::map<std::string, Scene> scenes;
 	Scene* currentScene;
 
+	virtual void Start();
 	virtual void Update(float fDeltaTime);
 	virtual void Destroy();
 
-	void AddNewScene(std::string name = "DefaultScene");
-	void AddExistingScene(Scene* scene);
+	Scene* AddNewScene(std::string name = "DefaultScene");
 
 	void DeleteScene(std::string name);
 
