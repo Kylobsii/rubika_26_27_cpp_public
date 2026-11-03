@@ -15,6 +15,7 @@
 #include <Sprite.h>
 #include <TextureMgr.h>
 #include <InputMgr.h>
+#include <DynamicColliderComponent.h>
 
 
 int main()
@@ -51,6 +52,12 @@ int main()
             headSprite->SetVisibility(true);
             headSprite->SetTexture(textureName);
             headSprite->SetAnimation("Head_Down");
+        }
+
+        DynamicColliderComponent* dcc = entity->AddComponent<DynamicColliderComponent>();
+        {
+            dcc->SetHitboxSize(sf::Vector2f(25, 30));
+            dcc->SetHitboxOffset(sf::Vector2f());
         }
     }
     gData.SceneMgr->SetCurrentScene("Main");

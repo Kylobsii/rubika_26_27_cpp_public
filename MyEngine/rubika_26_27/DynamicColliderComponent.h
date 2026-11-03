@@ -2,8 +2,10 @@
 
 #include <IComponent.h>
 
-#include <SfML/Graphics/Rect.hpp>
+#include <SFML/Graphics/RectangleShape.hpp>
+#include <SFML/Graphics/RenderWindow.hpp>
 #include <functional>
+#include "TransformComponent.h"
 
 enum class OnCollisionChoice
 {
@@ -14,12 +16,25 @@ enum class OnCollisionChoice
 class DynamicColliderComponent : public IComponent
 {
 public:
+
+	struct ColliderData
+	{
+		OnCollisionChoice collisionChoice = OnCollisionChoice::Block;
+
+		sf::Vector2f LocalSize = sf::Vector2f(1, 1);
+		sf::Vector2f LocalPosition = sf::Vector2f();
+	};
+
 	DynamicColliderComponent(Entity& entity);
 	~DynamicColliderComponent();
 
 	virtual void Start() override;
 	virtual void Update(float fDeltaTime) override;
 	virtual void Destroy() override;
+
+	void Draw(sf::RenderWindow& window) const;
+	virtual void DrawDebug() override;
+	virtual std::string GetName() override;
 
 	void SetHitboxSize(sf::Vector2f size);
 	void SetHitboxOffset(sf::Vector2f offset);
@@ -30,4 +45,15 @@ public:
 	const sf::FloatRect& GetHitbox() const;
 
 	void SetOnCollisionCallback(std::function<OnCollisionChoice(const Entity*)> callback);
+
+private:
+	
+	sf::FloatRect box;
+	ColliderData boxData;
+
+	TransformComponent* tr;
+
+	std::vector< std::function<OnCollisionChoice(const Entity*)>> Callbacks;
+
+	sf::RectangleShape debugBoxDisplay;
 };

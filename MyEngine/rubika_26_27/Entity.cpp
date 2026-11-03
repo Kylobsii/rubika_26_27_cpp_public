@@ -4,6 +4,10 @@
 #include "Globals.h"
 #include "TextureMgr.h"
 
+#ifdef _DEBUG
+#include "DynamicColliderComponent.h"
+#endif
+
 Entity::Entity(std::string friendlyName) : name(friendlyName)
 {
 }
@@ -46,5 +50,12 @@ void Entity::Draw(sf::RenderWindow& window) const
 		{
 			rend->Draw(window);
 		}
+
+#ifdef _DEBUG
+		if (DynamicColliderComponent* coll = dynamic_cast<DynamicColliderComponent*>(component))
+		{
+			coll->Draw(window);
+		}
+#endif
 	}
 }
