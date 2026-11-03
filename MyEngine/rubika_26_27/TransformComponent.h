@@ -35,7 +35,7 @@ public:
 	void SetScale(sf::Vector2f newScale);
 	sf::Vector2f GetScale() const;
 
-	void Move(sf::Vector2f deltaPosition);
+	void SetMovementDirection(sf::Vector2f dir, bool toAdd);
 
 	virtual void Start() override;
 	virtual void Update(float fDeltaTime) override;
@@ -55,6 +55,10 @@ private:
 
 	char WorldPosXBuffer[128];
 	char WorldPosYBuffer[128];
+
+	sf::Vector2f direction;
+	float speed = 0.05;
+	void Move(sf::Vector2f deltaPosition);
 
 	void UpdateMatrix();
 };

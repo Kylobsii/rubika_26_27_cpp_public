@@ -25,10 +25,7 @@ int main()
 
     ImGui::SFML::Init(window);
 
-	gData.InputMgr->CreateInputAction("MoveUp");
-    gData.InputMgr->CreateInputAction("MoveDown");
-    gData.InputMgr->CreateInputAction("MoveLeft");
-    gData.InputMgr->CreateInputAction("MoveRight");
+    gData.InputMgr->LoadInputActions();
 
     const char* texturePath = "../Ressources/IsaacSprite.png";
 	const char* textureName = "IsaacSprite";
@@ -61,39 +58,28 @@ int main()
 
     auto moveUpCallback = [entity](float value)
         {
-			entity->GetComponent<TransformComponent>()->Move(sf::Vector2f(0, -.04f * value));
+			entity->GetComponent<TransformComponent>()->SetMovementDirection(sf::Vector2f(0, -1), value != 0);
         };
+    gData.InputMgr->RegisterInputActionCallback("MoveUp", "Up Movement", moveUpCallback, nullptr);
 
     auto moveDownCallback = [entity](float value)
         {
-			entity->GetComponent<TransformComponent>()->Move(sf::Vector2f(0, .04f * value));
+            entity->GetComponent<TransformComponent>()->SetMovementDirection(sf::Vector2f(0, 1), value != 0);
         };
+    gData.InputMgr->RegisterInputActionCallback("MoveDown", "Down Movement", moveDownCallback, nullptr);
 
     auto moveLeftCallback = [entity](float value)
         {
-            entity->GetComponent<TransformComponent>()->Move(sf::Vector2f(-.04f * value, 0));
+            entity->GetComponent<TransformComponent>()->SetMovementDirection(sf::Vector2f(-1, 0), value != 0);
         };
+    gData.InputMgr->RegisterInputActionCallback("MoveLeft", "Left Movement", moveLeftCallback, nullptr);
 
     auto moveRightCallback = [entity](float value)
         {
-            entity->GetComponent<TransformComponent>()->Move(sf::Vector2f(.04f * value, 0));
+            entity->GetComponent<TransformComponent>()->SetMovementDirection(sf::Vector2f(1, 0), value != 0);
         };
-
-	gData.InputMgr->BindInputActionToKey("MoveUp", sf::Keyboard::Key::Up);
-    gData.InputMgr->BindInputActionToKey("MoveUp", sf::Keyboard::Key::Z);
-    gData.InputMgr->RegisterInputActionCallback("MoveUp", "Up Movement", moveUpCallback, nullptr);
-
-    gData.InputMgr->BindInputActionToKey("MoveDown", sf::Keyboard::Key::Down);
-    gData.InputMgr->BindInputActionToKey("MoveDown", sf::Keyboard::Key::S);
-    gData.InputMgr->RegisterInputActionCallback("MoveDown", "Down Movement", moveDownCallback, nullptr);
-    
-    gData.InputMgr->BindInputActionToKey("MoveLeft", sf::Keyboard::Key::Left);
-    gData.InputMgr->BindInputActionToKey("MoveLeft", sf::Keyboard::Key::Q);
-    gData.InputMgr->RegisterInputActionCallback("MoveLeft", "Left Movement", moveLeftCallback, nullptr);
-    
-    gData.InputMgr->BindInputActionToKey("MoveRight", sf::Keyboard::Key::Right);
-    gData.InputMgr->BindInputActionToKey("MoveRight", sf::Keyboard::Key::D);
     gData.InputMgr->RegisterInputActionCallback("MoveRight", "Right Movement", moveRightCallback, nullptr);
+
     sf::Clock clock;
     clock.restart();
 

@@ -31,15 +31,21 @@ public:
 	void RegisterInputActionCallback(const std::string& actionName, const std::string& debugName, std::function<void(float)> callback, void* owner);
 	void UnregisterInputActionCallbacks(const std::string& actionName, void* owner);
 
-	void BindInputActionToKey(const std::string& actionName, sf::Keyboard::Key key);
-	void UnbindInputActionFromKey(const std::string& actionName, sf::Keyboard::Key key);
+	void BindKeyToInputAction(const std::string& actionName, sf::Keyboard::Key key);
+	void UnbindKeyFromInputAction(const std::string& actionName, sf::Keyboard::Key key);
+
+	void LoadInputActions();
 
 protected:
 	std::unordered_map<std::size_t, InputAction> InputActions;
-	std::unordered_map<sf::Keyboard::Key, std::vector<std::size_t>> registeredKeys;
+	std::unordered_map<std::size_t, std::vector<sf::Keyboard::Key>> registeredKeys;
 
 private:
 	char actionNameBuffer[128];
 	std::string newActionName;
+
+	const char* actionsFilePath = "../Ressources/InputActions.xml";
+	void SaveActionsToFile(const std::string& filePath);
+	void LoadActionsFromFile(const std::string& filePath);
 };
 

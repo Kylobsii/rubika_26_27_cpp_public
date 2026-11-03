@@ -67,6 +67,13 @@ sf::Vector2f TransformComponent::GetScale() const
 	return Scale;
 }
 
+void TransformComponent::SetMovementDirection(sf::Vector2f dir, bool toAdd)
+{
+	dir = toAdd ? dir : -dir;
+
+	direction += dir;
+}
+
 void TransformComponent::Move(sf::Vector2f deltaPosition)
 {
 	WorldPosition += deltaPosition;
@@ -78,7 +85,9 @@ void TransformComponent::Start()
 {}
 
 void TransformComponent::Update(float fDeltaTime)
-{}
+{
+	Move(direction * speed);
+}
 
 void TransformComponent::Destroy()
 {}

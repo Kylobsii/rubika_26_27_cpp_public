@@ -1,0 +1,27 @@
+<InputActions>
+	<InputAction name="MoveUp">
+		<Keys>
+			<Key code="73"/>
+			<Key code="25"/>
+		</Keys>
+	</InputAction>
+	<InputAction name="MoveDown">
+		<Keys>
+			<Key code="74"/>
+			<Key code="18"/>
+		</Keys>
+	</InputAction>
+	<InputAction name="MoveRight">
+		<Keys>
+			<Key code="72"/>
+			<Key code="3"/>
+		</Keys>
+	</InputAction>
+	<InputAction name="MoveLeft">
+		<Keys>
+			<Key code="71"/>
+			<Key code="16"/>
+		</Keys>
+	</InputAction>
+</InputActions>
+

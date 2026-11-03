@@ -10,6 +10,14 @@
 #include <map>
 #include <vector>
 
+#include <rapidxml/rapidxml.hpp>
+#include <rapidxml/rapidxml_utils.hpp>
+#include <rapidxml/rapidxml_print.hpp>
+#include <filesystem>
+#include <fstream>
+
+using namespace rapidxml;
+
 
 
 InputMgr::InputMgr()
@@ -38,40 +46,36 @@ void InputMgr::Start()
 
 void InputMgr::Update(float fDeltaTime)
 {
-	for(auto& keyActionPair : registeredKeys)
+	for(auto& actionKeyPair : registeredKeys)
 	{
-		sf::Keyboard::Key key = keyActionPair.first;
-		std::vector<std::size_t>& actionHashes = keyActionPair.second;
-		if (sf::Keyboard::isKeyPressed(key))
+		std::size_t actionHash = actionKeyPair.first;
+		std::vector<sf::Keyboard::Key>& keys = actionKeyPair.second;
+		bool isPressed = false;
+
+		for (sf::Keyboard::Key key : keys)
 		{
-			for (std::size_t actionHash : actionHashes)
+			if (sf::Keyboard::isKeyPressed(key))
 			{
-				auto it = InputActions.find(actionHash);
-				if (it != InputActions.end())
-				{
-					InputAction& action = it->second;
-					action.SetValue(1.0f);
-					for (auto& callbackInfo : action.Callbacks)
-					{
-						callbackInfo.Callback(action.Value);
-					}
-				}
+				isPressed = true;
+			}
+		}
+
+		if(isPressed)
+		{
+			const auto& it = InputActions.find(actionHash);
+			if (it != InputActions.end())
+			{
+				InputAction& action = it->second;
+				action.SetValue(1.0f);
 			}
 		}
 		else
 		{
-			for (std::size_t actionHash : actionHashes)
+			const auto& it = InputActions.find(actionHash);
+			if (it != InputActions.end())
 			{
-				auto it = InputActions.find(actionHash);
-				if (it != InputActions.end())
-				{
-					InputAction& action = it->second;
-					action.SetValue(0.0f);
-					for (auto& callbackInfo : action.Callbacks)
-					{
-						callbackInfo.Callback(action.Value);
-					}
-				}
+				InputAction& action = it->second;
+				action.SetValue(0.0f);
 			}
 		}
 	}
@@ -150,22 +154,19 @@ void InputMgr::DrawDebug()
 
 			ImGui::Text("Value: %.2f", action.Value);
 
-
-
 			ImGui::Text("Binded Keys: ");
-			for(auto& keyActionPair : registeredKeys)
+			std::size_t actionHash = action.ActionNameHash;
+			if(registeredKeys.find(actionHash) != registeredKeys.end())
 			{
-				sf::Keyboard::Key key = keyActionPair.first;
-				std::vector<std::size_t>& actionHashes = keyActionPair.second;
-				if (std::find(actionHashes.begin(), actionHashes.end(), action.ActionNameHash) != actionHashes.end())
+				std::vector<sf::Keyboard::Key>& keys = registeredKeys[actionHash];
+				for (sf::Keyboard::Key key : keys)
 				{
 					ImGui::Text("  - %d", static_cast<int>(key));
-
 					ImGui::SameLine();
 					field_id = "X##" + std::to_string(static_cast<int>(key)) + "##" + action.ActionName;
 					if (ImGui::Button(field_id.c_str()))
 					{
-						UnbindInputActionFromKey(action.ActionName, key);
+						UnbindKeyFromInputAction(action.ActionName, key);
 						return;
 					}
 				}
@@ -204,6 +205,15 @@ void InputMgr::DrawDebug()
 			ImGui::Dummy(ImVec2(0.0f, 5.0f));
 		}
 	}
+
+	ImGui::Dummy(ImVec2(0.0f, 5.0f));
+	ImGui::Separator();
+
+	if (ImGui::Button("Save actions to default InputActions File"))
+	{
+		SaveActionsToFile(actionsFilePath);
+	}
+
 #endif
 }
 
@@ -266,25 +276,28 @@ void InputMgr::UnregisterInputActionCallbacks(const std::string& actionName, voi
 	}
 }
 
-void InputMgr::BindInputActionToKey(const std::string& actionName, sf::Keyboard::Key key)
+void InputMgr::BindKeyToInputAction(const std::string& actionName, sf::Keyboard::Key key)
 {
-	registeredKeys[key].emplace_back(std::hash<std::string>{}(actionName));
+	size_t hashName = std::hash<std::string>{}(actionName);
+	registeredKeys[hashName].emplace_back(key);
 }
 
-void InputMgr::UnbindInputActionFromKey(const std::string& actionName, sf::Keyboard::Key key)
+void InputMgr::UnbindKeyFromInputAction(const std::string& actionName, sf::Keyboard::Key key)
 {
-	auto it = registeredKeys.find(key);
+	size_t hashName = std::hash<std::string>{}(actionName);
+
+	auto it = registeredKeys.find(hashName);
 	if (it != registeredKeys.end())
 	{
-		for(auto actionIt = it->second.begin(); actionIt != it->second.end(); )
+		for(auto keyIt = it->second.begin(); keyIt != it->second.end(); )
 		{
-			if (*actionIt == std::hash<std::string>{}(actionName))
+			if (*keyIt == key)
 			{
-				actionIt = it->second.erase(actionIt);
+				keyIt = it->second.erase(keyIt);
 			}
 			else
 			{
-				++actionIt;
+				++keyIt;
 			}
 		}
 
@@ -292,5 +305,116 @@ void InputMgr::UnbindInputActionFromKey(const std::string& actionName, sf::Keybo
 		{
 			registeredKeys.erase(it);
 		}
+	}
+}
+
+void InputMgr::SaveActionsToFile(const std::string& filePath)
+{
+	if (std::filesystem::exists(filePath))
+	{
+		std::filesystem::remove(filePath);
+	}
+
+	xml_document<> doc;
+	xml_node<>* root = doc.allocate_node(node_element, "InputActions");
+
+	for (const auto& pair : InputActions)
+	{
+		xml_node<>* actionNode = doc.allocate_node(node_element, "InputAction");
+		actionNode->append_attribute(doc.allocate_attribute("name", pair.second.ActionName.c_str()));
+
+		size_t actionHashName = std::hash<std::string>{}(pair.second.ActionName);
+		if(registeredKeys.find(actionHashName) != registeredKeys.end())
+		{
+			xml_node<>* keysNode = doc.allocate_node(node_element, "Keys");
+			for (auto key : registeredKeys[actionHashName])
+			{
+				xml_node<>* keyNode = doc.allocate_node(node_element, "Key");
+				char* attribute = doc.allocate_string(std::to_string(static_cast<int>(key)).c_str());
+				keyNode->append_attribute(doc.allocate_attribute("code", attribute));
+				keysNode->append_node(keyNode);
+			}
+			actionNode->append_node(keysNode);
+		}
+
+		root->append_node(actionNode);
+	}
+	doc.append_node(root);
+
+	std::ofstream file(filePath);
+	if (file.is_open())
+	{
+		file << doc;
+		file.close();
+	}
+	else
+	{
+		Logger::Error("Failed to open file for saving input actions: " + filePath);
+	}
+}
+
+void InputMgr::LoadInputActions()
+{
+	LoadActionsFromFile(actionsFilePath);
+}
+
+void InputMgr::LoadActionsFromFile(const std::string& filePath)
+{
+	if (std::filesystem::exists(filePath))
+	{
+		file<> xmlFile(filePath.c_str());
+		xml_document<> doc;
+		doc.parse<0>(xmlFile.data());
+
+		std::string rootName = std::string(doc.first_node()->name(), doc.first_node()->name_size());
+		xml_node<>* root = doc.first_node("InputActions");
+
+		if (rootName == "InputActions")
+		{
+			xml_node<>* currNode = root->first_node("InputAction");
+
+			if (currNode == nullptr)
+			{
+				Logger::Error("Failed to load default InputActions, '../Ressources/InputActions.xml' doesn't contain any InputAction node. Please reconfigure the input actions by hand, and export the new configuration from the debug window.");
+			}
+
+			std::string currActionName = "";
+			size_t currActionHash;
+			while (currNode && std::string(currNode->name(), currNode->name_size()) == "InputAction")
+			{
+				currActionName = currNode->first_attribute()->value();
+				Logger::Info("Setting InputAction: " + currActionName);
+
+				CreateInputAction(currActionName);
+
+				xml_node<>* keysNode = currNode->first_node("Keys");
+				if (keysNode)
+				{
+					keysNode = keysNode->first_node("Key");
+
+					while (keysNode && std::string(keysNode->name(), keysNode->name_size()) == "Key")
+					{
+						int keyCode = std::stoi(keysNode->first_attribute("code")->value());
+
+						Logger::Info(std::format("Adding binding: {}", keyCode));
+						BindKeyToInputAction(currActionName, sf::Keyboard::Key(keyCode));
+
+						keysNode = keysNode->next_sibling();
+					}
+				}
+
+				currNode = currNode->next_sibling();
+			}
+
+			Logger::Info("Finished setting InputActions.");
+		}
+		else
+		{
+			Logger::Error("Failed to load default InputActions, '../Ressources/InputActions.xml' isn't formatted correctly. Please reconfigure the input actions by hand, and export the new configuration from the debug window.");
+		}
+	}
+	else
+	{
+		Logger::Error("Failed to load default InputActions, '../Ressources/InputActions.xml' is missing.");
 	}
 }
