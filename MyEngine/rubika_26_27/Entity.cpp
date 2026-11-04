@@ -10,6 +10,10 @@
 
 Entity::Entity(std::string friendlyName) : name(friendlyName)
 {
+	TransformComponent* tc = this->AddComponent<TransformComponent>();
+	{
+		tc->SetWorldPosition(sf::Vector2f(100.f, 100.f));
+	}
 }
 
 Entity::~Entity()
@@ -40,6 +44,7 @@ void Entity::Destroy()
 		component->Destroy();
 		delete component;
 	}
+	components.clear();
 }
 
 void Entity::Draw(sf::RenderWindow& window) const

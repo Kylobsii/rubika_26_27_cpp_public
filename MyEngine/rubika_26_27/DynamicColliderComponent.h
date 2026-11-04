@@ -45,9 +45,9 @@ public:
 	const sf::FloatRect& GetHitbox() const;
 
 	void SetOnCollisionCallback(std::function<OnCollisionChoice(const Entity*)> callback);
+	void ExecuteCallbacks(const Entity* other, sf::FloatRect overlapBox);
 
 private:
-	
 	sf::FloatRect box;
 	ColliderData boxData;
 

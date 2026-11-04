@@ -221,7 +221,7 @@ void SceneMgr::DrawDebug()
 				}
 
 				scene.newEntityName = std::string(scene.entityNameBuffer) + "##" + std::to_string(scene.GetEntityID());
-				scene.AddEntity(scene.newEntityName);
+				scene.AddEntity<Entity>(scene.newEntityName);
 
 				scene.entityNameBuffer[0] = '\0';
 			}

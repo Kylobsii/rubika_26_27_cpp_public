@@ -217,6 +217,8 @@
     <ClCompile Include="InputMgr.cpp" />
     <ClCompile Include="Logger.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="ObstacleEntity.cpp" />
+    <ClCompile Include="PlayerEntity.cpp" />
     <ClCompile Include="RectangleShape.cpp" />
     <ClCompile Include="RenderComponent.cpp" />
     <ClCompile Include="Scene.cpp" />
@@ -253,11 +255,14 @@
     <ClInclude Include="InputAction.h" />
     <ClInclude Include="InputMgr.h" />
     <ClInclude Include="Logger.h" />
+    <ClInclude Include="ObstacleEntity.h" />
+    <ClInclude Include="PlayerEntity.h" />
     <ClInclude Include="Profiler.h" />
     <ClInclude Include="RectangleShape.h" />
     <ClInclude Include="RenderComponent.h" />
     <ClInclude Include="RenderComponent.hxx" />
     <ClInclude Include="Scene.h" />
+    <ClInclude Include="Scene.hxx" />
     <ClInclude Include="SceneMgr.h" />
     <ClInclude Include="Sprite.h" />
     <ClInclude Include="TextureMgr.h" />

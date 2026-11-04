@@ -21,6 +21,9 @@ public:
 	bool RegisterDebugAction(const std::string& debugName, std::function<void(void*)> callback, void* userData);
 	void UnregisterDebugAction(const std::string& debugName);
 
+	bool drawColliders = false;
+	void SetDrawColliders(float value);
+
 private:
 
 	struct sDebugAction

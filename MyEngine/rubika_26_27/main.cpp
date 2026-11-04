@@ -16,6 +16,8 @@
 #include <TextureMgr.h>
 #include <InputMgr.h>
 #include <DynamicColliderComponent.h>
+#include <PlayerEntity.h>
+#include <ObstacleEntity.h>
 
 
 int main()
@@ -32,60 +34,27 @@ int main()
 	const char* textureName = "IsaacSprite";
     gData.TextureMgr->LoadTexture(texturePath);
 
-    Entity* entity;
     Scene* scene = gData.SceneMgr->AddNewScene("Main");
     {
-        entity = scene->AddEntity("MainEntity");
-        TransformComponent* tc = entity->AddComponent<TransformComponent>();
-        {
-            tc->SetWorldPosition(sf::Vector2f(100.f, 100.f));
-        }
+        scene->AddEntity<PlayerEntity>("Player");
 
-        RenderComponent* rc = entity->AddComponent<RenderComponent>();
-        {
-            Sprite* bodySprite = rc->AddNewDrawable<Sprite>("Body", sf::Vector2f(2, 0), 0, sf::Vector2f(1, 1));
-            bodySprite->SetVisibility(true);
-            bodySprite->SetTexture(textureName);
-            bodySprite->SetAnimation("Body_Vertical");
+        TransformComponent* currObstacleTr;
+        currObstacleTr = scene->AddEntity<ObstacleEntity>("Obstacle_0")->GetComponent<TransformComponent>();
+        currObstacleTr->SetWorldPosition(sf::Vector2f(212, 100));
+        currObstacleTr->SetScale(sf::Vector2f(0.5f, 5));
 
-            Sprite* headSprite = rc->AddNewDrawable<Sprite>("Head", sf::Vector2f(-2.5f, -20), 0, sf::Vector2f(1, 1));
-            headSprite->SetVisibility(true);
-            headSprite->SetTexture(textureName);
-            headSprite->SetAnimation("Head_Down");
-        }
-
-        DynamicColliderComponent* dcc = entity->AddComponent<DynamicColliderComponent>();
-        {
-            dcc->SetHitboxSize(sf::Vector2f(25, 30));
-            dcc->SetHitboxOffset(sf::Vector2f());
-        }
+        currObstacleTr = scene->AddEntity<ObstacleEntity>("Obstacle_1")->GetComponent<TransformComponent>();
+        currObstacleTr->SetWorldPosition(sf::Vector2f(100, 212));
+        currObstacleTr->SetScale(sf::Vector2f(5, 0.5f));
     }
     gData.SceneMgr->SetCurrentScene("Main");
     gData.SceneMgr->Start();;
 
-    auto moveUpCallback = [entity](float value)
+    auto toggleDrawCollidersCallback = [](float value)
         {
-			entity->GetComponent<TransformComponent>()->SetMovementDirection(sf::Vector2f(0, -1), value != 0);
+            gData.DebugMgr->SetDrawColliders(value);
         };
-    gData.InputMgr->RegisterInputActionCallback("MoveUp", "Up Movement", moveUpCallback, nullptr);
-
-    auto moveDownCallback = [entity](float value)
-        {
-            entity->GetComponent<TransformComponent>()->SetMovementDirection(sf::Vector2f(0, 1), value != 0);
-        };
-    gData.InputMgr->RegisterInputActionCallback("MoveDown", "Down Movement", moveDownCallback, nullptr);
-
-    auto moveLeftCallback = [entity](float value)
-        {
-            entity->GetComponent<TransformComponent>()->SetMovementDirection(sf::Vector2f(-1, 0), value != 0);
-        };
-    gData.InputMgr->RegisterInputActionCallback("MoveLeft", "Left Movement", moveLeftCallback, nullptr);
-
-    auto moveRightCallback = [entity](float value)
-        {
-            entity->GetComponent<TransformComponent>()->SetMovementDirection(sf::Vector2f(1, 0), value != 0);
-        };
-    gData.InputMgr->RegisterInputActionCallback("MoveRight", "Right Movement", moveRightCallback, nullptr);
+    gData.InputMgr->RegisterInputActionCallback("DebugDrawColliders", "Set Draw Colliders", toggleDrawCollidersCallback, nullptr);
 
     sf::Clock clock;
     clock.restart();

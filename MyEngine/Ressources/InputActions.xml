@@ -23,5 +23,10 @@
 			<Key code="16"/>
 		</Keys>
 	</InputAction>
+	<InputAction name="DebugDrawColliders">
+		<Keys>
+			<Key code="1"/>
+		</Keys>
+	</InputAction>
 </InputActions>
 

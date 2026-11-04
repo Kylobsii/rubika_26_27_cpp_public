@@ -21,6 +21,8 @@ void DebugMgr::Draw()
 					}
 				}
 
+				if (ImGui::Checkbox("Draw Colliders", &drawColliders)) {}
+
 				ImGui::EndTabItem();
 			}
 
@@ -92,4 +94,9 @@ void DebugMgr::UnregisterDebugAction(const std::string& debugName)
 
 	Actions.erase(it);
 #endif
+}
+
+void DebugMgr::SetDrawColliders(float value)
+{
+	drawColliders = std::round(std::abs(value));
 }

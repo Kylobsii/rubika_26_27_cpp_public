@@ -19,7 +19,7 @@ public:
 	virtual void DrawDebug() = 0;
 	virtual std::string GetName() = 0;
 
-protected:
+
 	Entity& GetEntity() const { return ParentEntity; };
 
 private:

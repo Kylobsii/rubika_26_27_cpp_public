@@ -341,6 +341,11 @@ StaticTileData TextureMgr::StaticTileNodeToData(xml_node<>* node)
 
 const TextureData& TextureMgr::GetTextureData(const std::string& name) const
 {
+	if (name == "Default" || name == "default")
+	{
+		return DefaultTextureData;
+	}
+
 	auto it = Textures.find(name);
 	if (it != Textures.end())
 	{

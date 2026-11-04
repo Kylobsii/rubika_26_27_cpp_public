@@ -26,7 +26,10 @@ public:
 	char entityNameBuffer[128];
 	std::string newEntityName;
 
-	Entity* AddEntity(std::string name);
+	template <typename E>
+	requires std::is_base_of_v<Entity, E>
+	E* AddEntity(std::string name);
+
 	void RemoveEntity(Entity* entity);
 
 	virtual void Start();
@@ -42,3 +45,5 @@ public:
 private:
 	int createdEntityCount = 0;
 };
+
+#include "Scene.hxx"
