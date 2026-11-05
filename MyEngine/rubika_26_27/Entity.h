@@ -9,6 +9,7 @@
 #include "TransformComponent.h"
 #include "RenderComponent.h"
 #include "Logger.h"
+#include "Tags.h"
 
 
 namespace sf
@@ -24,6 +25,7 @@ public:
 
 	std::string name;
 	std::vector<IComponent*> components;
+	Tags tags;
 
 	virtual void Start();
 	virtual void Update(float fDeltaTime);

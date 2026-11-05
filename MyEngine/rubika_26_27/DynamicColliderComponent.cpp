@@ -107,14 +107,32 @@ void DynamicColliderComponent::SetHitboxOffset(sf::Vector2f offset)
 	box.position = sf::Vector2f(offset.x + worldPos.x, offset.y + worldPos.y);
 }
 
+void DynamicColliderComponent::SetCollisionMask(int tags, bool requireAll)
+{
+	boxData.collisionMask = tags;
+	boxData.RequireAllFilterMode = requireAll;
+}
+
 void DynamicColliderComponent::EnableCollision(bool bEnable)
 {
 	boxData.collisionChoice = bEnable ? OnCollisionChoice::Block : OnCollisionChoice::Ignore;
 }
 
-bool DynamicColliderComponent::AreCollisionsEnabled() const
+bool DynamicColliderComponent::CollisionsEnabled() const
 {
 	return boxData.collisionChoice == OnCollisionChoice::Block;
+}
+
+bool DynamicColliderComponent::CanCollide(DynamicColliderComponent* other)
+{
+	if (boxData.RequireAllFilterMode)
+	{
+		return other->GetEntity().tags.HasAllTags(boxData.collisionMask.mask);
+	}
+	else
+	{
+		return other->GetEntity().tags.HasAnyTags(boxData.collisionMask.mask);
+	}
 }
 
 const sf::FloatRect& DynamicColliderComponent::GetHitbox() const

@@ -211,6 +211,7 @@
     <ClCompile Include="DebugMgr.cpp" />
     <ClCompile Include="DynamicColliderComponent.cpp" />
     <ClCompile Include="Entity.cpp" />
+    <ClCompile Include="Tags.cpp" />
     <ClCompile Include="Globals.cpp" />
     <ClCompile Include="IDrawable.cpp" />
     <ClCompile Include="InputAction.cpp" />
@@ -249,6 +250,7 @@
     <ClInclude Include="DynamicColliderComponent.h" />
     <ClInclude Include="Entity.h" />
     <ClInclude Include="Entity.hxx" />
+    <ClInclude Include="Tags.h" />
     <ClInclude Include="Globals.h" />
     <ClInclude Include="IComponent.h" />
     <ClInclude Include="IDrawable.h" />

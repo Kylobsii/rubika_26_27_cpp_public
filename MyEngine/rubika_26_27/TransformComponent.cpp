@@ -86,7 +86,7 @@ void TransformComponent::Start()
 
 void TransformComponent::Update(float fDeltaTime)
 {
-	Move(direction * speed);
+	Move(direction * speed * fDeltaTime);
 }
 
 void TransformComponent::Destroy()

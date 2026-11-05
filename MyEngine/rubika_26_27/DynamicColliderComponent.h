@@ -6,6 +6,7 @@
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <functional>
 #include "TransformComponent.h"
+#include "Tags.h"
 
 enum class OnCollisionChoice
 {
@@ -20,6 +21,9 @@ public:
 	struct ColliderData
 	{
 		OnCollisionChoice collisionChoice = OnCollisionChoice::Block;
+
+		Tags collisionMask;
+		bool RequireAllFilterMode = false;
 
 		sf::Vector2f LocalSize = sf::Vector2f(1, 1);
 		sf::Vector2f LocalPosition = sf::Vector2f();
@@ -38,9 +42,11 @@ public:
 
 	void SetHitboxSize(sf::Vector2f size);
 	void SetHitboxOffset(sf::Vector2f offset);
+	void SetCollisionMask(int tags, bool requireAll = false);
 
 	void EnableCollision(bool bEnable);
-	bool AreCollisionsEnabled() const;
+	bool CollisionsEnabled() const;
+	bool CanCollide(DynamicColliderComponent* other);
 
 	const sf::FloatRect& GetHitbox() const;
 

@@ -5,9 +5,12 @@
 #include "DynamicColliderComponent.h"
 #include "Globals.h"
 #include "InputMgr.h"
+#include "Tags.h"
 
 PlayerEntity::PlayerEntity(std::string name) : Entity(name)
 {
+    tags += ENTITY_TAG_DYNAMIC | ENTITY_TAG_PLAYER;
+    
     const char* texturePath = "../Ressources/IsaacSprite.png";
     const char* textureName = "IsaacSprite";
     gData.TextureMgr->LoadTexture(texturePath);
@@ -35,6 +38,8 @@ PlayerEntity::PlayerEntity(std::string name) : Entity(name)
                 return OnCollisionChoice::Block;
             };
         dcc->SetOnCollisionCallback(collisionCallback);
+
+        dcc->SetCollisionMask(ENTITY_TAG_STATIC | ENTITY_TAG_NEUTRAL | ENTITY_TAG_ENEMY);
     }
 
     SetupBindings();

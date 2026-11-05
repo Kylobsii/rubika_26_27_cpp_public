@@ -5,9 +5,12 @@
 #include "DynamicColliderComponent.h"
 #include "Globals.h"
 #include "TextureMgr.h"
+#include "Tags.h"
 
 ObstacleEntity::ObstacleEntity(std::string name) : Entity(name)
 {
+    tags += ENTITY_TAG_STATIC | ENTITY_TAG_NEUTRAL;
+
     TextureData defaultTexture = gData.TextureMgr->GetDefaultTextureData();
 
     RenderComponent* rc = this->AddComponent<RenderComponent>();

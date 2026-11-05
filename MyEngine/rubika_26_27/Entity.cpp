@@ -8,8 +8,10 @@
 #include "DynamicColliderComponent.h"
 #endif
 
-Entity::Entity(std::string friendlyName) : name(friendlyName)
+Entity::Entity(std::string friendlyName) : name(friendlyName), tags(this)
 {
+	tags = ENTITY_TAG_NONE;
+
 	TransformComponent* tc = this->AddComponent<TransformComponent>();
 	{
 		tc->SetWorldPosition(sf::Vector2f(100.f, 100.f));

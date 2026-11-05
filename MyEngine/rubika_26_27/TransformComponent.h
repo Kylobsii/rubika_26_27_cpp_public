@@ -57,7 +57,7 @@ private:
 	char WorldPosYBuffer[128];
 
 	sf::Vector2f direction;
-	float speed = 0.05;
+	float speed = 150;
 	void Move(sf::Vector2f deltaPosition);
 
 	void UpdateMatrix();

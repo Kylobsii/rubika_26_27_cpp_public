@@ -42,8 +42,14 @@ public:
 	*/
 	void Draw(sf::RenderWindow& window) const;
 
+	void UpdateEntitySorting(Entity* entity, bool changingDynamicVec, bool removing);
+
 private:
+
 	int createdEntityCount = 0;
+
+	std::vector<Entity*> staticEntities;
+	std::vector<Entity*> dynamicEntities;
 };
 
 #include "Scene.hxx"
