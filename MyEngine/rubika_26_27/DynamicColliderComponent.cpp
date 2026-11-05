@@ -133,7 +133,23 @@ void DynamicColliderComponent::ExecuteCallbacks(const Entity* other, sf::FloatRe
 	{
 		if (callback(other) == OnCollisionChoice::Block)
 		{
-			// resolve collision
+			sf::Vector2f dir;
+			bool dirBool;
+
+			if (overlapBox.size.x >= overlapBox.size.y)
+			{
+				dir = sf::Vector2f(0, overlapBox.size.y);
+				dirBool = tr->GetWorldPosition().y > other->GetComponent<TransformComponent>()->GetWorldPosition().y;
+				dir = dirBool ? dir : -dir;
+			}
+			else
+			{
+				dir = sf::Vector2f(overlapBox.size.x, 0);
+				dirBool = tr->GetWorldPosition().x > other->GetComponent<TransformComponent>()->GetWorldPosition().x;
+				dir = dirBool ? dir : -dir;
+			}
+
+			tr->SetWorldPosition(tr->GetWorldPosition() + dir);
 		}
 	}
 }
